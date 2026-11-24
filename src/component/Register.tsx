@@ -12,53 +12,89 @@ function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-// REGISTER FUNCTION
-const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  // REGISTER FUNCTION
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  setError("");
-  setLoading(true);
+    setError("");
 
-  try {
-    const response = await API.post("/auth/register", {
-      Name: name.trim(),                   
-      Email: email.trim().toLowerCase(),     
-      Password: password,                    
-      Role:null                   
-    });
-
-    alert(response.data?.message || "Registration successful!");
-
-    // REGISTER SUCCESS -> LOGIN PAGE
-    navigate("/login");
-
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      setError(
-        err.response?.data?.message || "Registration failed"
-      );
-    } else {
-      setError("Something went wrong");
+    // Frontend validation
+    if (!name.trim() || !email.trim() || !password) {
+      setError("Please fill all fields.");
+      return;
     }
-  } finally {
-    setLoading(false);
-  }
-};
+
+    if (password.length < 6) {
+      setError("Password must contain at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // API CALL
+      const response = await API.post("/auth/register", {
+        Name: name.trim(),
+        Email: email.trim().toLowerCase(),
+        Password: password,
+   
+      });
+
+      // SUCCESS MESSAGE
+      alert(response.data?.message || "Registration successful!");
+
+      // CLEAR FORM
+      setName("");
+      setEmail("");
+      setPassword("");
+   
+
+      // REDIRECT TO LOGIN
+      navigate("/login");
+    } catch (err) {
+      console.log("Registration Error:", err);
+
+      if (axios.isAxiosError(err)) {
+        console.log("Status:", err.response?.status);
+        console.log("Backend Response:", err.response?.data);
+
+        const backendMessage =
+          err.response?.data?.message ||
+          err.response?.data?.title ||
+          err.response?.data?.detail;
+
+        if (err.response?.status === 400) {
+          setError(
+            backendMessage ||
+              "Invalid registration details or email already exists.",
+          );
+        } else if (err.response?.status === 409) {
+          setError("This email is already registered.");
+        } else if (err.response?.status === 500) {
+          setError("Server error. Please try again later.");
+        } else if (!err.response) {
+          setError("Cannot connect to server. Check your backend.");
+        } else {
+          setError(backendMessage || "Registration failed.");
+        }
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center px-4">
-
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-
         {/* LOGO */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold italic text-[#f84ea0]">
             Cosmetopia
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Create your account!
-          </p>
+          <p className="text-gray-500 mt-2">Create your account!</p>
         </div>
 
         {/* TITLE */}
@@ -66,17 +102,12 @@ const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
           Register your account
         </h3>
 
-        {/* ERROR */}
-        {error && (
-          <p className="text-red-500 text-center mb-4">
-            {error}
-          </p>
-        )}
+        {/* ERROR MESSAGE */}
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-        {/* FORM */}
+        {/* REGISTER FORM */}
         <form onSubmit={handleRegister} className="space-y-5">
-
-          {/* USERNAME */}
+          {/* NAME */}
           <input
             type="text"
             placeholder="UserName"
@@ -107,6 +138,8 @@ const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-[#f84ea0]"
           />
 
+        
+          
           {/* REGISTER BUTTON */}
           <button
             type="submit"
@@ -115,22 +148,17 @@ const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
           >
             {loading ? "Registering..." : "Register"}
           </button>
-
         </form>
 
         {/* LOGIN LINK */}
         <div className="text-center mt-6">
           <p className="text-gray-500 text-sm">
             Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-[#f84ea0] font-semibold"
-            >
+            <Link to="/login" className="text-[#f84ea0] font-semibold">
               Login
             </Link>
           </p>
         </div>
-
       </div>
     </div>
   );

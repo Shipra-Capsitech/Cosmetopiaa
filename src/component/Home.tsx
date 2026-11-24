@@ -16,8 +16,10 @@ interface ProductType {
 }
 
 const images = [
-  "https://unsplash.com", 
-  "https://unsplash.com"
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQySz6c1rXXOmfVZEkrfAQIM2zZecmxXg4ZFxv7CCl97g&s=10", 
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQv3A32uZO9-wWiZaTEmjzsRIVW24FRNJZyVc-0photA&s=10",
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCzVtC-s6VtZo4qTJUt0_8UFV-E7LtBadFH1kMaig7cA&s=10',
+  "https://loremflickr.com/600/600/cosmetics,face,matte,finish,setting,spray?lock=464",
 ];
 
 function Home() {
