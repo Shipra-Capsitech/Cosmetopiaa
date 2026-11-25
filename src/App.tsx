@@ -17,63 +17,53 @@ import Face from "./component/Face";
 import Hair from "./component/Hair";
 import Fragrance from "./component/Fragrance";
 import Everyday from "./component/Everyday";
+
 import User from "./Users/User";
 import UserProfile from "./Users/UserProfile";
 import Products from "./Users/Productss";
 import Checkout from "./component/checkout";
 
+import { AuthProvider } from "./context/AuthContext";
+import   ProtectedRoute from "./component/ProtectedRoute";
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/Index" element={<Index />} />
+      <AuthProvider>
+        <Routes>
+          {/* PUBLIC ROUTES */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/Index" element={<Index />} />
+          <Route path="/About" element={<About />} />
+          <Route path="/Service" element={<Service />} />
+          <Route path="/Contact" element={<Contact />} />
 
-        <Route path="/" element={<Home />} />
+          {/* PUBLIC PRODUCT CATEGORIES */}
+          <Route path="/Lips" element={<Lips />} />
+          <Route path="/Eyes" element={<Eyes />} />
+          <Route path="/Face" element={<Face />} />
+          <Route path="/Hair" element={<Hair />} />
+          <Route path="/Fragrance" element={<Fragrance />} />
+          <Route path="/Everyday" element={<Everyday />} />
 
-        <Route path="/About" element={<About />} />
+          {/* ADMIN PROTECTED ROUTES */}
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+            <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/Order" element={<Order />} />
+            <Route path="/Customer" element={<Customer />} />
+            <Route path="/Settings" element={<Settings />} />
+          </Route>
 
-        <Route path="/Service" element={<Service />} />
-
-        <Route path="/Contact" element={<Contact />} />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/Register" element={<Register />} />
-
-        <Route path="/Order" element={<Order />} />
-
-        <Route path="/Customer" element={<Customer />} />
-
-        <Route path="/Settings" element={<Settings />} />
-
-        <Route path="/Lips" element={<Lips />} />
-
-        <Route path="/Eyes" element={<Eyes />} />
-
-        <Route path="/Face" element={<Face />} />
-
-        <Route path="/Hair" element={<Hair />} />
-
-        <Route path="/Fragrance" element={<Fragrance />} />
-
-        <Route path="/Everyday" element={<Everyday />} />
-
-        <Route path="/Dashboard" element={<Dashboard />} />
-
-        {/* USER */}
-
-        < Route path="/User" element={<User />} />
-
-        {/* OTHER USER PAGES */}
-
-        <Route path="/UserProfile" element={<UserProfile />} />
-
-        <Route path="/Productss" element={<Products />} />
-
-        <Route path="/Checkout" element={<Checkout/>}/>
-
-      </Routes>
-      
+          <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+            <Route path="/User" element={<User />} />
+            <Route path="/UserProfile" element={<UserProfile />} />
+            <Route path="/Productss" element={<Products />} />
+            <Route path="/Checkout" element={<Checkout />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

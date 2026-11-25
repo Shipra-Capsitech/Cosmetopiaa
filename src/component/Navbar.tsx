@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { FaBagShopping } from "react-icons/fa6";
@@ -10,7 +9,7 @@ import {
   saveCart,
   removeFromCart,
   type CartItem,
-} from "../utils/cart"
+} from "../utils/cart";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -18,13 +17,9 @@ function Navbar() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  // CART DRAWER
   const [visible, setVisible] = useState(false);
-
-  // CART PRODUCTS
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // GET CART ITEMS
   useEffect(() => {
     const updateCart = () => {
       setCart(getCart());
@@ -41,7 +36,6 @@ function Navbar() {
     };
   }, []);
 
-  // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -54,35 +48,32 @@ function Navbar() {
     window.location.reload();
   };
 
-  // CHANGE QUANTITY
   const changeQuantity = (id: string, change: number) => {
-    const updatedCart = cart.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          quantity:  item.quantity + change,
-        };
-      }
+    const updatedCart = cart
+      .map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            quantity: item.quantity + change,
+          };
+        }
 
-      return item;
-    })
-
-    .filter((item)=>item.quantity>0);
+        return item;
+      })
+      .filter((item) => item.quantity > 0);
 
     saveCart(updatedCart);
   };
 
-  // REMOVE PRODUCT
   const handleRemove = (id: string) => {
     removeFromCart(id);
   };
 
-  // TOTAL CART COUNT
   const cartCount = cart.reduce(
-    (total, item) => total + item.quantity, 0
+    (total, item) => total + item.quantity,
+    0
   );
 
-  // TOTAL PRICE
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -91,92 +82,109 @@ function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <div className="h-[68px] w-full flex items-center px-6 bg-white shadow-md sticky top-0 z-50">
+      <div className="w-full bg-white shadow-md sticky top-0 z-50">
 
-        {/* LOGO */}
-        <h1
-          className="text-3xl font-bold text-[#f84ea0] italic cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          Cosmetopia
-        </h1>
+        <div className="w-full max-w-7xl mx-auto px-6 h-[68px] flex items-center">
 
-        <div className="ml-auto flex items-center gap-10">
+          {/* LOGO */}
+          <h1
+            className="text-2xl md:text-3xl font-bold text-[#f84ea0] italic cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            Cosmetopia
+          </h1>
 
-          {/* NAVIGATION */}
-          <nav>
-            <ul className="flex items-center gap-8 list-none">
-              <li><a href="/">HOME</a></li>
-              <li><a href="/About">ABOUT</a></li>
-              <li><a href="/Service">SERVICE</a></li>
-              <li><a href="/contact">CONTACT</a></li>
-            </ul>
-          </nav>
+          <div className="ml-auto flex items-center gap-4 lg:gap-8">
 
-          {/* LOGIN / LOGOUT */}
-          {token ? (
-            <div className="flex items-center gap-6">
+            {/* NAVIGATION */}
+            <nav>
+              <ul className="flex items-center gap-3 lg:gap-6 list-none text-xs">
+                <li>
+                  <a href="/">HOME</a>
+                </li>
+
+                <li>
+                  <a href="/About">ABOUT</a>
+                </li>
+
+                <li>
+                  <a href="/Service">SERVICE</a>
+                </li>
+
+                <li>
+                  <a href="/Contact">CONTACT</a>
+                </li>
+              </ul>
+            </nav>
+
+            {/* LOGIN / LOGOUT */}
+            {token ? (
+              <div className="flex items-center gap-3">
+
+                <button
+                  onClick={() =>
+                    navigate(
+                      role?.toLowerCase() === "admin"
+                        ? "/dashboard"
+                        : "/User"
+                    )
+                  }
+                  className="text-pink-500 font-medium text-xs"
+                >
+                  DASHBOARD
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="text-pink-500 border border-pink-500 px-3 py-1 rounded hover:bg-pink-50 transition text-xs"
+                >
+                  Logout
+                </button>
+
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-pink-500 border border-pink-500 px-3 py-1 rounded hover:bg-pink-50 transition text-xs"
+                >
+                  Login
+                </button>
+
+                <button
+                  onClick={() => navigate("/Register")}
+                  className="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 transition text-xs"
+                >
+                  Register
+                </button>
+
+              </div>
+            )}
+
+            {/* SEARCH AND CART */}
+            <div className="flex items-center gap-4 text-gray-600">
+
+              <FaSearch
+                size={16}
+                className="cursor-pointer hover:text-pink-500 transition"
+              />
+
               <button
-                onClick={() =>
-                  navigate(
-                    role?.toLowerCase() === "admin"
-                      ? "/dashboard"
-                      : "/User"
-                  )
-                }
-                className="text-pink-500 font-medium"
+                onClick={() => setVisible(true)}
+                className="relative cursor-pointer hover:text-pink-500 transition"
+                aria-label="Open shopping cart"
               >
-                DASHBOARD
+                <FaBagShopping size={18} />
+
+                {cartCount > 0 && (
+                  <span className="absolute -top-3 -right-3 bg-pink-500 text-white text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </button>
 
-              <button
-                onClick={handleLogout}
-                className="text-pink-500 border border-pink-500 px-3 py-1 rounded hover:bg-pink-50 transition"
-              >
-                Logout
-              </button>
             </div>
-          ) : (
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => navigate("/login")}
-                className="text-pink-500 border border-pink-500 px-3 py-1 rounded hover:bg-pink-50 transition"
-              >
-                Login
-              </button>
-
-              <button
-                onClick={() => navigate("/Register")}
-                className="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 transition"
-              >
-                Register
-              </button>
-            </div>
-          )}
-
-          {/* SEARCH AND CART */}
-          <div className="flex items-center gap-5 text-gray-600">
-
-            <FaSearch
-              size={19}
-              className="cursor-pointer hover:text-pink-500 transition"
-            />
-
-            {/* CART ICON */}
-            <button
-              onClick={() => setVisible(true)}
-              className="relative cursor-pointer hover:text-pink-500 transition"
-              aria-label="Open shopping cart"
-            >
-              <FaBagShopping size={19} />
-
-              {cartCount > 0 && (
-                <span className="absolute -top-3 -right-3 bg-pink-500 text-white text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </button>
-
           </div>
         </div>
       </div>
@@ -207,14 +215,12 @@ function Navbar() {
         ) : (
           <div className="flex flex-col min-h-full">
 
-            {/* CART PRODUCTS */}
             <div className="flex-1">
               {cart.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-4 border-b py-5"
                 >
-                  {/* PRODUCT IMAGE */}
                   <img
                     src={item.image}
                     alt={item.name}
@@ -223,23 +229,18 @@ function Navbar() {
 
                   <div className="flex-1">
 
-                    {/* PRODUCT NAME */}
                     <h3 className="font-semibold text-gray-800">
                       {item.name}
                     </h3>
 
-                    {/* PRICE */}
                     <p className="text-pink-500 font-bold mt-1">
                       ₹{item.price}
                     </p>
 
-                    {/* QUANTITY BUTTONS */}
                     <div className="flex items-center gap-3 mt-3">
 
                       <button
-                        onClick={() =>
-                          changeQuantity(item.id, -1)
-                        }
+                        onClick={() => changeQuantity(item.id, -1)}
                         className="bg-gray-100 px-3 py-1 rounded"
                       >
                         -
@@ -248,9 +249,7 @@ function Navbar() {
                       <span>{item.quantity}</span>
 
                       <button
-                        onClick={() =>
-                          changeQuantity(item.id, 1)
-                        }
+                        onClick={() => changeQuantity(item.id, 1)}
                         className="bg-gray-100 px-3 py-1 rounded"
                       >
                         +
@@ -258,7 +257,6 @@ function Navbar() {
 
                     </div>
 
-                    {/* REMOVE */}
                     <button
                       onClick={() => handleRemove(item.id)}
                       className="text-red-500 text-sm mt-3 hover:underline"
@@ -271,7 +269,6 @@ function Navbar() {
               ))}
             </div>
 
-            {/* TOTAL PRICE */}
             <div className="border-t pt-5 mt-5">
 
               <div className="flex justify-between text-xl font-bold mb-5">
@@ -282,7 +279,6 @@ function Navbar() {
                 </span>
               </div>
 
-              {/* CHECKOUT BUTTON */}
               <button
                 onClick={() => {
                   setVisible(false);
