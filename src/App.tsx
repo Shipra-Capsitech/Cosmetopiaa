@@ -62,7 +62,7 @@ function App() {
 
         {/* USER */}
 
-        <Route path="/User" element={<User />} />
+        < Route path="/User" element={<User />} />
 
         {/* OTHER USER PAGES */}
 
