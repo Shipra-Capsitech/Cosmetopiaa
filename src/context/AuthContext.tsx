@@ -4,6 +4,7 @@ import {
   useContext,
   useState,
   type ReactNode,
+  //React ke andar render hone wale content ka TypeScript type hai.
 } from "react";
 
 interface AuthContextType {
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => !!localStorage.getItem("token")
   );
+//!! value bollean value m convert karta h
 
   const [role, setRole] = useState<string | null>(
     () => localStorage.getItem("role")?.toLowerCase() ?? null
