@@ -15,7 +15,7 @@ function Navbar() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const role  =  localStorage.getItem("role");
 
   const [visible, setVisible] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
