@@ -14,7 +14,7 @@ const ProtectedRoute = ({
   const location = useLocation();
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const role  = localStorage.getItem("role");
 
   if (isLoading) {
     return <div>Loading...</div>;
